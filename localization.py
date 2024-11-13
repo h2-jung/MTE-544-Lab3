@@ -29,7 +29,7 @@ class localization(Node):
 
         super().__init__("localizer")
 
-        elf.loc_logger=Logger( loggerName , loggerHeaders)
+        self.loc_logger=Logger( loggerName , loggerHeaders)
         self.pose=None
         
         if type==rawSensors:
@@ -47,13 +47,13 @@ class localization(Node):
         
         # TODO Part 3: Set up the quantities for the EKF (hint: you will need the functions for the states and measurements)
         
-        x= ...
+        x= np.array([0,0,0,0,0,0])
         
-        Q= ...
+        Q= np.eye(6,6) * 0.5
 
-        R= ...
+        R= np.eye(6,6) * 0.5
         
-        P= ... # initial covariance
+        P= np.eye(6,6) * 0.5 # initial covariance
         
         self.kf=kalman_filter(P,Q,R, x, dt)
         
