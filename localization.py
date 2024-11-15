@@ -51,15 +51,15 @@ class localization(Node):
         
         Q= np.eye(6,6) * 0.5
 
-        R= np.eye(6,6) * 0.5
+        R= np.eye(4,4) * 0.5
         
         P= np.eye(6,6) * 0.5 # initial covariance
         
         self.kf=kalman_filter(P,Q,R, x, dt)
         
         # TODO Part 3: Use the odometry and IMU data for the EKF
-        self.odom_sub=message_filters.Subscriber(...)
-        self.imu_sub=message_filters.Subscriber(...)
+        self.odom_sub=message_filters.Subscriber(self, odom, '/odom')
+        self.imu_sub=message_filters.Subscriber(self, Imu, '/imu')
         
         time_syncher=message_filters.ApproximateTimeSynchronizer([self.odom_sub, self.imu_sub], queue_size=10, slop=0.1)
         time_syncher.registerCallback(self.fusion_callback)
@@ -84,13 +84,13 @@ class localization(Node):
         self.kf.update(z)
         
         # Get the estimate
-        xhat=self.kf.get_states()
+        xhat, _ =self.kf.get_states()
 
         # Update the pose estimate to be returned by getPose
         self.pose=np.array([xhat[0], xhat[1], xhat[2], odom_msg.header.stamp])
 
         # TODO Part 4: log your data
-        self.loc_logger.log_values([imu_ax, imu_ay, xhat[2], xhat[3], xhat[4], xhat[5], xhat[0], xhat[1], odom_msg.header.stamp])
+        self.loc_logger.log_values([z[2], z[3], xhat[2], xhat[3], xhat[4], xhat[5], xhat[0], xhat[1], odom_msg.header.stamp.nanosec])
       
     def odom_callback(self, pose_msg):
         
