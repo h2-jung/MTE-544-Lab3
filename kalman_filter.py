@@ -15,11 +15,7 @@ class kalman_filter:
         self.dt =dt
         
     def predict(self):
-        v = self.x[4]
-        th = self.x[2]
-        dt = self.dt
-        vdot = self.x[5]
-        
+
         # Jacobian Process Matrix
         self.A = self.jacobian_A()
 
